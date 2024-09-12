@@ -19,7 +19,7 @@ function connect() {
     return $C;
 }
 
-function sqlSelect($C, $query, $format = false, ...$vars) {
+/*function sqlSelect($C, $query, $format = false, ...$vars) {
     $stmt = $C->prepare($query);
     if($format) {
         $stmt->bind_param($format, ...$vars);
@@ -31,6 +31,25 @@ function sqlSelect($C, $query, $format = false, ...$vars) {
     }
     $stmt->close();
     return false;
+}*/
+
+function sqlSelect($C, $query, $vars = []) {
+    // Prepare the statement
+    $result = pg_prepare($C, "my_query", $query);
+    if ($result === false) {
+        return false;
+    }
+
+    // Execute the prepared statement
+    $result = pg_execute($C, "my_query", $vars);
+    if ($result === false) {
+        return false; // Execute failed
+    }
+
+    // Fetch all results as an associative array
+    $res = pg_fetch_all($result);
+    
+    return $res !== false ? $res : [];
 }
 
 

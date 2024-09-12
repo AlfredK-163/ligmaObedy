@@ -10,15 +10,16 @@ $output = ob_get_clean(); // Get the output buffer contents and clean it
 echo $output .= '</body></html>'; 
 */
 
-$C = connect();
-//$C = null;
+$query = "SELECT * FROM ligma_obedy.rating WHERE consumer_id = $id";
+$id = 1;
+//$query = "SELECT name FROM ligma_obedy.rating WHERE id = $id";
+
+
+//$C = connect();
+$C = null;
 if($C) {
     echo 'Connected <br>';
-    $id = 1;
-    //$query = "SELECT name FROM ligma_obedy.consumer WHERE id = $id";
-    $query = "SELECT * FROM ligma_obedy.rating WHERE consumer_id = $id AND rating = 0";
     $result = pg_query($C, $query);
-    //echo "Executing query: $query <br>";
 
     if(!$result) {
         echo 'Error occurred while executing the query :( <br>';
@@ -26,12 +27,13 @@ if($C) {
         exit;
     }
 
-    $row = pg_fetch_assoc($result);
-    if($row) {
-        echo 'Jidlo kde jsem dal 0 bodu: <br>' . $row['comment'] . '<br>';
-    } else {
-        echo "No consumer found with id = 1";
+    $obedCount = 0;
+    while($row = pg_fetch_assoc($result)) {
+        $obedCount++;
+        echo 'Obed ' .$obedCount.' rating: ' . $row['comment'] . '<br>';
     }
+    echo 'Total obed found: '. $obedCount. '<br>';
+    
     pg_free_result($result);
     pg_close($C);
 } else {
